@@ -1,43 +1,31 @@
-'use strict';
+import Sequelize from 'sequelize';
+import * as configEX from '../config/config.js';
+import User from './users.js';
+import Question from './questions.js';
+import Answer from './answers.js';
 
-const fs = require('fs');
-const path = require('path');
-const Sequelize = require('sequelize');
-const process = require('process');
-const basename = path.basename(__filename);
 const env = process.env.NODE_ENV || 'development';
-const config = require(__dirname + '/../config/config.json')[env];
+const config = configEX[env];
 const db = {};
 
-let sequelize;
-if (config.use_env_variable) {
-  sequelize = new Sequelize(process.env[config.use_env_variable], config);
-} else {
-  sequelize = new Sequelize(config.database, config.username, config.password, config);
-}
-
-fs
-  .readdirSync(__dirname)
-  .filter(file => {
-    return (
-      file.indexOf('.') !== 0 &&
-      file !== basename &&
-      file.slice(-3) === '.js' &&
-      file.indexOf('.test.js') === -1
-    );
-  })
-  .forEach(file => {
-    const model = require(path.join(__dirname, file))(sequelize, Sequelize.DataTypes);
-    db[model.name] = model;
-  });
-
-Object.keys(db).forEach(modelName => {
-  if (db[modelName].associate) {
-    db[modelName].associate(db);
-  }
-});
-
+const sequelize = new Sequelize(
+    config.database,
+    config.username,
+    config.password,
+    config,
+);
 db.sequelize = sequelize;
-db.Sequelize = Sequelize;
 
-module.exports = db;
+db.User = User;
+db.Question = Question;
+db.Answer = Answer;
+
+User.init(sequelize);
+Question.init(sequelize);
+Answer.init(sequelize);
+
+User.associate(db);
+Question.associate(db);
+Answer.associate(db);
+
+export { db };
