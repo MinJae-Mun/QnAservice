@@ -10,6 +10,7 @@ import { routerMiddleware } from './middlewares/routerMiddleware.js';
 import { errorMiddleware } from './middlewares/errorMiddleware.js';
 
 import { db } from './models/index.js';
+import { AuthRouter } from './src/routers/auth.router.js';
 
 // 환경변수 세팅
 dotenv.config();
@@ -63,6 +64,9 @@ app.use(express.json());
 // 쿠키 및 세션 처리 미들웨어
 app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(sessionMiddleware);
+
+// api 라우터
+app.use('/api', [AuthRouter]);
 
 // 라우터 404 에러 방지 미들웨어
 app.use(routerMiddleware);
