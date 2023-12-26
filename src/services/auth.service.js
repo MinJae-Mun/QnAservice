@@ -34,7 +34,7 @@ export class AuthService {
     signin = async (signinData) => {
         const { userId, password } = signinData;
 
-        const auth = await this.usersRepository.readOneByEmail(userId);
+        const auth = await this.usersRepository.readOneByUserId(userId);
 
         if (!auth) {
             const error = new Error('존재하지 않는 아이디입니다.');
